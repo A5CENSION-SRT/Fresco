@@ -4,8 +4,8 @@
   <requires lib="Adw" version="1.0"/>
   <template class="WallpanaWindow" parent="AdwApplicationWindow">
     <property name="title" translatable="yes">WallPana</property>
-    <property name="default-width">900</property>
-    <property name="default-height">650</property>
+    <property name="default-width">1150</property>
+    <property name="default-height">750</property>
     <property name="content">
       <object class="AdwToastOverlay" id="toast_overlay">
         <property name="child">
@@ -79,8 +79,8 @@
                             <property name="column-spacing">16</property>
                             <property name="homogeneous">True</property>
                             <property name="selection-mode">none</property>
-                            <property name="min-children-per-line">2</property>
-                            <property name="max-children-per-line">8</property>
+                            <property name="min-children-per-line">3</property>
+                            <property name="max-children-per-line">4</property>
                           </object>
                         </property>
                       </object>

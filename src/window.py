@@ -24,9 +24,9 @@ from gi.repository import Adw, GdkPixbuf, Gio, GLib, Gtk
 
 from .crop_dialog import CropDialog
 
-THUMB_HEIGHT = 400
-THUMB_BOX_WIDTH = 260
-THUMB_BOX_HEIGHT = 170
+THUMB_HEIGHT = 500
+THUMB_BOX_WIDTH = 340
+THUMB_BOX_HEIGHT = 210
 
 
 @Gtk.Template(resource_path='/com/WallPana/v1/window.ui')
