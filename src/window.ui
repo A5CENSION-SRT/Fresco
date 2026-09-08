@@ -66,7 +66,7 @@
                   <object class="GtkStackPage">
                     <property name="name">grid</property>
                     <property name="child">
-                      <object class="GtkScrolledWindow">
+                      <object class="GtkScrolledWindow" id="scrolled_window">
                         <property name="hscrollbar-policy">never</property>
                         <property name="child">
                           <object class="GtkFlowBox" id="flow_box">

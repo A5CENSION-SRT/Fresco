@@ -36,6 +36,7 @@ class WallpanaWindow(Adw.ApplicationWindow):
     toast_overlay = Gtk.Template.Child()
     main_stack = Gtk.Template.Child()
     flow_box = Gtk.Template.Child()
+    scrolled_window = Gtk.Template.Child()
 
     def __init__(self, manager, **kwargs):
         super().__init__(**kwargs)
@@ -141,6 +142,9 @@ class WallpanaWindow(Adw.ApplicationWindow):
 
     # -- rendering ---------------------------------------------------
     def refresh(self):
+        vadjustment = self.scrolled_window.get_vadjustment()
+        scroll_position = vadjustment.get_value()
+
         child = self.flow_box.get_first_child()
         while child is not None:
             next_child = child.get_next_sibling()
@@ -153,6 +157,16 @@ class WallpanaWindow(Adw.ApplicationWindow):
         current = self.manager.current_name()
         for name in names:
             self.flow_box.append(self._build_item(name, name == current))
+
+        # Rebuilding the FlowBox resets the scroll position - restore it
+        # once the new children are laid out and the adjustment's upper
+        # bound is recalculated, otherwise this clamps back to 0.
+        GLib.idle_add(self._restore_scroll_position, vadjustment, scroll_position)
+
+    def _restore_scroll_position(self, vadjustment, scroll_position):
+        upper = max(0.0, vadjustment.get_upper() - vadjustment.get_page_size())
+        vadjustment.set_value(min(scroll_position, upper))
+        return GLib.SOURCE_REMOVE
 
     def _thumbnail_pixbuf(self, name):
         """A small, pre-scaled pixbuf for the grid, cached by (name, mtime)
