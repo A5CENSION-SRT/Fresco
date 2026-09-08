@@ -177,20 +177,16 @@ class WallpanaWindow(Adw.ApplicationWindow):
     def _build_item(self, name, is_current):
         pixbuf = self._thumbnail_pixbuf(name)
         picture = Gtk.Picture.new_for_pixbuf(pixbuf) if pixbuf else Gtk.Picture()
-        # COVER: crop every thumbnail to one consistent aspect ratio rather
-        # than showing each image's own ratio - simpler and tidier for a
-        # grid. The actual wallpaper crop (what gets applied) is still set
-        # precisely via the crop dialog; this only affects this preview.
-        # Fixed size + no expand + centered keeps every cell's *requested*
-        # size identical regardless of each image's own aspect ratio - if
-        # the Picture is left to hexpand, GTK sizes the FlowBox column from
-        # the decoded pixel size, which produces wildly uneven, broken rows.
-        picture.set_content_fit(Gtk.ContentFit.COVER)
+        # CONTAIN: scale each thumbnail down to fit the cell, keeping its own
+        # aspect ratio - never cropped, never stretched. The size request
+        # is only an upper bound the image is scaled into, so this must
+        # stay off a filled/bordered background (no 'card' class) or the
+        # letterboxed space around non-matching aspect ratios shows up as
+        # an ugly empty box.
+        picture.set_content_fit(Gtk.ContentFit.CONTAIN)
         picture.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
         picture.set_hexpand(False)
         picture.set_vexpand(False)
-        picture.set_overflow(Gtk.Overflow.HIDDEN)
-        picture.add_css_class('card')
 
         overlay = Gtk.Overlay()
         # Gtk.Overlay always allocates its *main* child the overlay's full
