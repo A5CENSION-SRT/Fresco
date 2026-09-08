@@ -24,8 +24,8 @@ function readConfig() {
     }
 }
 
-const WallpanaIndicator = GObject.registerClass(
-class WallpanaIndicator extends PanelMenu.Button {
+const FrescoIndicator = GObject.registerClass(
+class FrescoIndicator extends PanelMenu.Button {
     _init() {
         super._init(0.0, 'Fresco');
 
@@ -93,9 +93,9 @@ class WallpanaIndicator extends PanelMenu.Button {
     }
 });
 
-export default class WallpanaExtension extends Extension {
+export default class FrescoExtension extends Extension {
     enable() {
-        this._indicator = new WallpanaIndicator();
+        this._indicator = new FrescoIndicator();
         Main.panel.addToStatusArea(this.uuid, this._indicator);
     }
 

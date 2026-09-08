@@ -207,8 +207,7 @@ class FrescoWindow(Adw.ApplicationWindow):
             check.set_valign(Gtk.Align.START)
             check.set_margin_top(6)
             check.set_margin_end(6)
-            check.add_css_class('accent')
-            check.add_css_class('osd')
+            check.add_css_class('selected-badge')
             overlay.add_overlay(check)
 
         button = Gtk.Button()

@@ -48,8 +48,8 @@ the timer can be turned on or off there as well.
 
 ## GNOME Shell extension
 
-The optional extension adds a top-bar menu for rotating or selecting a
-specific Fresco wallpaper. It is installed with the main Meson build.
+The optional extension adds a top-bar menu for rotating to the next Fresco
+wallpaper. It is installed with the main Meson build.
 
 Enable it after installing Fresco:
 

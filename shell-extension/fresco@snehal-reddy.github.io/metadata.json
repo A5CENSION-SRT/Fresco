@@ -1,8 +1,8 @@
 {
   "uuid": "fresco@snehal-reddy.github.io",
   "name": "Fresco",
-  "description": "Rotate or pick your Fresco wallpaper from the top bar, without opening the app.",
+  "description": "Rotate to the next Fresco wallpaper from the top bar, without opening the app.",
   "shell-version": ["45", "46", "47", "48", "49", "50"],
-  "url": "",
+  "url": "https://github.com/A5CENSION-SRT/Fresco",
   "version": 1
 }

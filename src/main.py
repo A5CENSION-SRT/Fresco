@@ -20,6 +20,7 @@
 import os
 import subprocess
 import sys
+import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -30,7 +31,7 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Adw, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 
 from .wallpaper_manager import WallpaperManager
 from .window import FrescoWindow
@@ -59,6 +60,14 @@ class FrescoApplication(Adw.Application):
         self.create_action('apply-wallpaper', self.on_apply_wallpaper_action,
                             param_type=GLib.VariantType.new('s'))
 
+    def do_startup(self):
+        Adw.Application.do_startup(self)
+        provider = Gtk.CssProvider()
+        provider.load_from_resource('/com/fresco/v1/style.css')
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(), provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
     def do_activate(self):
         """Called when the application is activated.
 
@@ -69,7 +78,12 @@ class FrescoApplication(Adw.Application):
         if not win:
             win = FrescoWindow(manager=self.manager, application=self)
         win.present()
-        self._ensure_rotation_timer_enabled()
+        if not self._timer_enabled:
+            # Run off the main thread: the systemctl calls below take a few
+            # hundred ms combined, which would otherwise stall the window's
+            # open animation right as it starts playing.
+            threading.Thread(
+                target=self._ensure_rotation_timer_enabled, daemon=True).start()
 
     def on_about_action(self, *args):
         """Callback for the app.about action."""

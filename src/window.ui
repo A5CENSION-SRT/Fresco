@@ -15,14 +15,14 @@
                 <child type="start">
                   <object class="GtkButton" id="add_button">
                     <property name="icon-name">list-add-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Add Wallpaper</property>
+                    <property name="tooltip-text" translatable="yes">Import</property>
                     <property name="action-name">win.add-wallpaper</property>
                   </object>
                 </child>
                 <child type="start">
                   <object class="GtkButton" id="rotate_button">
                     <property name="icon-name">view-refresh-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Rotate to Next Wallpaper</property>
+                    <property name="tooltip-text" translatable="yes">Change</property>
                     <property name="action-name">win.rotate-next</property>
                   </object>
                 </child>
