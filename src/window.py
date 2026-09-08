@@ -189,26 +189,18 @@ class WallpanaWindow(Adw.ApplicationWindow):
         picture.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
         picture.set_hexpand(False)
         picture.set_vexpand(False)
-        picture.set_halign(Gtk.Align.CENTER)
-        picture.set_valign(Gtk.Align.CENTER)
-
-        frame = Gtk.Box()
-        frame.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
-        frame.set_halign(Gtk.Align.CENTER)
-        frame.set_valign(Gtk.Align.CENTER)
-        frame.set_overflow(Gtk.Overflow.HIDDEN)
-        frame.add_css_class('card')
-        frame.append(picture)
+        picture.set_overflow(Gtk.Overflow.HIDDEN)
+        picture.add_css_class('card')
 
         overlay = Gtk.Overlay()
-        # Gtk.Overlay always allocates its *main* child (frame) the overlay's
-        # full allocated size, ignoring frame's own halign/valign - so the
-        # overlay itself needs a pinned size, otherwise a wide FlowBox row
-        # stretches the overlay, and frame stretches right along with it.
+        # Gtk.Overlay always allocates its *main* child the overlay's full
+        # allocated size - so the overlay itself needs a pinned size,
+        # otherwise a wide FlowBox row stretches the overlay (and the
+        # picture along with it).
         overlay.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
         overlay.set_halign(Gtk.Align.CENTER)
         overlay.set_valign(Gtk.Align.CENTER)
-        overlay.set_child(frame)
+        overlay.set_child(picture)
         if is_current:
             check = Gtk.Image.new_from_icon_name('object-select-symbolic')
             check.set_halign(Gtk.Align.END)
