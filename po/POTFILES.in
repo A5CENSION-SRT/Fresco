@@ -1,8 +1,7 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/com.Fresco.v1.desktop.in
-data/com.Fresco.v1.metainfo.xml.in
-data/com.Fresco.v1.gschema.xml
+data/com.fresco.v1.desktop.in
+data/com.fresco.v1.metainfo.xml.in
 src/main.py
 src/window.py
 src/window.ui

@@ -9,7 +9,7 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 const APP_ID = 'com.fresco.v1';
-const APP_OBJECT_PATH = '/com/Fresco/v1';
+const APP_OBJECT_PATH = '/com/fresco/v1';
 
 function readConfig() {
     try {

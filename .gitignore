@@ -1,4 +1,5 @@
 _build/
+obj-*/
 builddir/
 builddir2/
 __pycache__/

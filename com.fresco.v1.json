@@ -30,7 +30,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/snehal-reddy/Coding/gnome"
+                    "url" : "https://github.com/A5CENSION-SRT/Fresco.git",
+                    "branch" : "master"
                 }
             ]
         }

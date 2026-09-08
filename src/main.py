@@ -20,6 +20,7 @@
 import os
 import subprocess
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from gettext import gettext as _
@@ -35,7 +36,7 @@ from .wallpaper_manager import WallpaperManager
 from .window import FrescoWindow
 from . import config
 
-ROTATE_TIMER_UNIT = 'com.Fresco.v1.rotate.timer'
+ROTATE_TIMER_UNIT = 'com.fresco.v1.rotate.timer'
 MIN_ROTATION_INTERVAL_HOURS = 1
 MAX_ROTATION_INTERVAL_HOURS = 168
 
@@ -46,7 +47,7 @@ class FrescoApplication(Adw.Application):
     def __init__(self):
         super().__init__(application_id='com.fresco.v1',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
-                         resource_base_path='/com/Fresco/v1')
+                         resource_base_path='/com/fresco/v1')
         self.manager = WallpaperManager()
         self._timer_enabled = False
 
@@ -85,7 +86,7 @@ class FrescoApplication(Adw.Application):
     def on_preferences_action(self, widget, _param):
         """Callback for the app.preferences action.
 
-        Automatic rotation is scheduled by the com.Fresco.v1.rotate.timer
+        Automatic rotation is scheduled by the com.fresco.v1.rotate.timer
         systemd --user unit, enabled automatically on first launch; this
         just surfaces that state and lets it be toggled by hand.
         """
@@ -95,6 +96,11 @@ class FrescoApplication(Adw.Application):
         interval_label = Gtk.Label(label=self._format_interval(interval))
         interval_label.set_xalign(0)
         interval_label.add_css_class('dim-label')
+        next_rotation_label = Gtk.Label(
+            label=self._next_rotation_text(interval) if enabled else '')
+        next_rotation_label.set_xalign(0)
+        next_rotation_label.add_css_class('dim-label')
+        next_rotation_label.set_visible(enabled)
         scale = Gtk.Scale.new_with_range(
             Gtk.Orientation.HORIZONTAL,
             MIN_ROTATION_INTERVAL_HOURS,
@@ -108,14 +114,18 @@ class FrescoApplication(Adw.Application):
         scale.set_tooltip_text(_('Rotation interval in hours'))
         scale.connect(
             'value-changed',
-            lambda slider: interval_label.set_text(
-                self._format_interval(int(slider.get_value()))
+            lambda slider: (
+                interval_label.set_text(
+                    self._format_interval(int(slider.get_value()))),
+                next_rotation_label.set_text(
+                    self._next_rotation_text(int(slider.get_value()))),
             ),
         )
         interval_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         interval_box.append(Gtk.Label(label=_('Rotate every'), xalign=0))
         interval_box.append(scale)
         interval_box.append(interval_label)
+        interval_box.append(next_rotation_label)
         dialog = Adw.AlertDialog(
             heading=_('Automatic Rotation'),
             body=_('Fresco uses a systemd --user timer, so it keeps working '
@@ -158,6 +168,31 @@ class FrescoApplication(Adw.Application):
             return _('{} days').format(days)
         return _('{} hours').format(hours)
 
+    def _next_rotation_text(self, hours):
+        """Preview when the next rotation would land for a given interval.
+
+        Based on the last swap time plus that interval, not the timer's
+        own internal state, so the preview updates live as the slider
+        moves before the interval is actually applied.
+        """
+        last_swap = self.manager.last_swap()
+        if not last_swap:
+            return _('Next rotation: not yet scheduled')
+        try:
+            last = datetime.fromisoformat(last_swap)
+        except ValueError:
+            return _('Next rotation: not yet scheduled')
+        remaining = (last + timedelta(hours=hours)) - datetime.now(timezone.utc)
+        total_minutes = int(remaining.total_seconds() // 60)
+        if total_minutes <= 0:
+            return _('Next rotation: due now')
+        hours_left, minutes_left = divmod(total_minutes, 60)
+        if hours_left and minutes_left:
+            return _('Next rotation in {} h {} min').format(hours_left, minutes_left)
+        if hours_left:
+            return _('Next rotation in {} hours').format(hours_left)
+        return _('Next rotation in {} minutes').format(minutes_left)
+
     def _set_rotation_interval(self, hours):
         data = config.load()
         data['rotation_interval_hours'] = hours
@@ -168,7 +203,11 @@ class FrescoApplication(Adw.Application):
         )
         timer_dropin.parent.mkdir(parents=True, exist_ok=True)
         timer_dropin.write_text(
-            f'[Timer]\nOnUnitActiveSec={hours}h\n', encoding='utf-8'
+            # OnUnitActiveSec= is cumulative across the base unit and
+            # drop-ins (systemd.timer(5)); an empty assignment first
+            # clears the base unit's 24h default so only this interval
+            # is active, instead of both firing.
+            f'[Timer]\nOnUnitActiveSec=\nOnUnitActiveSec={hours}h\n', encoding='utf-8'
         )
         self._run_systemctl('daemon-reload')
         if self._timer_active():
@@ -176,7 +215,7 @@ class FrescoApplication(Adw.Application):
 
     def on_shortcuts_action(self, *args):
         """Callback for the app.shortcuts action."""
-        builder = Gtk.Builder.new_from_resource('/com/Fresco/v1/shortcuts-dialog.ui')
+        builder = Gtk.Builder.new_from_resource('/com/fresco/v1/shortcuts-dialog.ui')
         dialog = builder.get_object('shortcuts_dialog')
         dialog.present(self.props.active_window)
 

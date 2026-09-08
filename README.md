@@ -2,9 +2,9 @@
 
 Fresco is a native GNOME wallpaper manager. Keep a personal collection of
 images, crop them before applying, switch wallpapers from the app, or let
-Fresco rotate your desktop background automatically every 24 hours.
+Fresco rotate your desktop background automatically on your schedule.
 
-![Fresco wallpaper collection](images%20/image.png)
+![Fresco wallpaper collection](images/image.png)
 
 ## Features
 

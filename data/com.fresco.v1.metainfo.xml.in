@@ -9,8 +9,9 @@
   <description>
     <p>
       Fresco keeps a folder of your favorite wallpapers and rotates your
-      desktop background every 24 hours. Add images, crop them to fit your
-      screen, and switch wallpapers manually or let Fresco do it for you.
+      desktop background on a configurable schedule. Add images, crop them
+      to fit your screen, and switch wallpapers manually or let Fresco do it
+      for you.
     </p>
   </description>
 
@@ -35,7 +36,7 @@
         <p>Initial release.</p>
         <ul>
           <li>Managed wallpaper folder with add/remove/thumbnail grid</li>
-          <li>Automatic 24-hour rotation via a systemd --user timer</li>
+          <li>Configurable rotation from 1 hour to 7 days via a systemd --user timer</li>
           <li>Manual rotate and interactive per-wallpaper selection</li>
           <li>Crop preview matched to your display's aspect ratio</li>
         </ul>

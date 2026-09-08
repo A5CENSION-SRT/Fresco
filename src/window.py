@@ -29,7 +29,7 @@ THUMB_BOX_WIDTH = 340
 THUMB_BOX_HEIGHT = 210
 
 
-@Gtk.Template(resource_path='/com/Fresco/v1/window.ui')
+@Gtk.Template(resource_path='/com/fresco/v1/window.ui')
 class FrescoWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'FrescoWindow'
 
