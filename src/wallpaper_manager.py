@@ -24,8 +24,10 @@ pointing org.gnome.desktop.background at the file - no GTK/Gdk needed. That
 is what lets the same manager run headlessly from a systemd --user timer.
 """
 
+import fcntl
 import random
 import shutil
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -38,6 +40,7 @@ from . import config
 
 IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.webp', '.bmp', '.tiff', '.avif'}
 ORIGINALS_DIRNAME = '.originals'
+LOCK_FILENAME = '.rotate.lock'
 
 
 class WallpaperManager:
@@ -53,6 +56,33 @@ class WallpaperManager:
 
     def _save(self):
         config.save(self._data)
+
+    @contextmanager
+    def _locked(self):
+        """Serialize rotate/apply across processes.
+
+        The manual "Rotate to Next Wallpaper" action and the systemd
+        --user timer's own catch-up fire (e.g. right after waking from
+        sleep) can both invoke `fresco --rotate` at nearly the same
+        moment. Without a lock, two processes' picture-uri and
+        picture-uri-dark writes can interleave, leaving the two keys
+        pointing at different wallpapers - and since GNOME renders
+        whichever key matches the active color scheme, the desktop can
+        end up stuck showing a stale image even though config.json (and
+        the extension's preview, which reads it) shows the rotation as
+        having happened.
+        """
+        config.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        lock_path = config.CONFIG_DIR / LOCK_FILENAME
+        with open(lock_path, 'w', encoding='utf-8') as fh:
+            fcntl.flock(fh, fcntl.LOCK_EX)
+            try:
+                # Pick up whatever the last writer left, rather than
+                # whatever this instance loaded at construction time.
+                self._data = config.load()
+                yield
+            finally:
+                fcntl.flock(fh, fcntl.LOCK_UN)
 
     def _sync_order(self):
         """Reconcile the stored order with what is actually on disk."""
@@ -176,6 +206,11 @@ class WallpaperManager:
 
     def apply(self, name):
         """Set an already-managed (already-cropped) wallpaper as current."""
+        with self._locked():
+            return self._apply_locked(name)
+
+    def _apply_locked(self, name):
+        """Do the actual apply work. Caller must already hold _locked()."""
         path = self.path_for(name)
         if not path.exists():
             return False
@@ -194,13 +229,14 @@ class WallpaperManager:
     def rotate_next(self):
         """Apply a random wallpaper from the managed folder, avoiding an
         immediate repeat of the current one when there's a choice."""
-        order = self.list_wallpapers()
-        if not order:
-            return None
-        if len(order) == 1:
-            name = order[0]
-        else:
-            current = self.current_name()
-            name = random.choice([n for n in order if n != current] or order)
-        self.apply(name)
-        return name
+        with self._locked():
+            order = self.list_wallpapers()
+            if not order:
+                return None
+            if len(order) == 1:
+                name = order[0]
+            else:
+                current = self.current_name()
+                name = random.choice([n for n in order if n != current] or order)
+            self._apply_locked(name)
+            return name

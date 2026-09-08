@@ -90,7 +90,7 @@ class FrescoApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='Fresco',
                                 application_icon='com.fresco.v1',
                                 developer_name='Snehal-Reddy',
-                                version='0.2.0',
+                                version='0.3.0',
                                 # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
                                 translator_credits = _('translator-credits'),
                                 developers=['Snehal-Reddy'],
@@ -211,11 +211,21 @@ class FrescoApplication(Adw.Application):
         data = config.load()
         data['rotation_interval_hours'] = hours
         config.save(data)
-        timer_dropin = (
+        timer_dropin_dir = (
             Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config')))
-            / 'systemd' / 'user' / f'{ROTATE_TIMER_UNIT}.d' / 'interval.conf'
+            / 'systemd' / 'user' / f'{ROTATE_TIMER_UNIT}.d'
         )
-        timer_dropin.unlink(missing_ok=True)
+        timer_dropin_dir.mkdir(parents=True, exist_ok=True)
+        # Override the packaged unit's OnCalendar=hourly with a monotonic
+        # interval matching the user's chosen hours. The blank OnCalendar=
+        # clears the base unit's setting first, since systemd drop-ins
+        # merge rather than replace.
+        (timer_dropin_dir / 'interval.conf').write_text(
+            '[Timer]\n'
+            'OnCalendar=\n'
+            f'OnUnitActiveSec={hours}h\n'
+            'Persistent=true\n'
+        )
         self._run_systemctl('daemon-reload')
         if self._timer_active():
             self._run_systemctl('restart')
@@ -256,6 +266,15 @@ class FrescoApplication(Adw.Application):
         if self._timer_enabled:
             return
         self._timer_enabled = True
+        if self._timer_active():
+            # Already scheduled from a previous launch: leave it running.
+            # Restarting a Persistent=true timer that has already passed
+            # its next scheduled tick fires an immediate catch-up run, so
+            # doing this unconditionally on every app launch could race a
+            # second "fresco --rotate" against the timer's own pending
+            # fire (e.g. right after waking from sleep) and interleave
+            # their GSettings writes.
+            return
         interval = self._rotation_interval_hours()
         self._set_rotation_interval(interval)
         self._run_systemctl('enable', '--now')

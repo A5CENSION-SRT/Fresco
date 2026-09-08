@@ -1,3 +1,11 @@
+fresco (0.3.0-1) unstable; urgency=medium
+
+  * Apply configured rotation intervals to the systemd timer.
+  * Serialize concurrent manual and automatic rotations.
+  * Avoid restarting an active timer when the app opens.
+
+ -- Snehal-Reddy <developer@miraie.in>  Tue, 08 Sep 2026 20:00:00 +0530
+
 fresco (0.2.0-1) unstable; urgency=medium
 
   * Fix automatic rotation after suspend and resume.

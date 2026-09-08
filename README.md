@@ -33,23 +33,23 @@ GTK, Python GI, and systemd packages.
 The published `.deb` package is intended for Debian-based distributions. On
 other distributions, build Fresco from the source archive or a Git checkout.
 
-## Release 0.2.0
+## Release 0.3.0
 
 The latest release is available on the [Fresco releases page](https://github.com/A5CENSION-SRT/Fresco/releases).
 
-- Debian package: `fresco_0.2.0-1_all.deb`
-- Source archive: `fresco_0.2.0-1.tar.xz`
+- Debian package: `fresco_0.3.0-1_all.deb`
+- Source archive: `fresco_0.3.0-1.tar.xz`
 
 To install the Debian package:
 
 ```sh
-sudo apt install ./fresco_0.2.0-1_all.deb
+sudo apt install ./fresco_0.3.0-1_all.deb
 ```
 
 To extract the source archive:
 
 ```sh
-tar -xf fresco_0.2.0-1.tar.xz
+tar -xf fresco_0.3.0-1.tar.xz
 cd WallPana
 ```
 
@@ -58,7 +58,7 @@ cd WallPana
 Download the Debian package from the [Fresco releases page](https://github.com/A5CENSION-SRT/Fresco/releases), then install it with:
 
 ```sh
-sudo apt install ./fresco_0.2.0-1_all.deb
+sudo apt install ./fresco_0.3.0-1_all.deb
 ```
 
 Start Fresco from the application launcher or run:
