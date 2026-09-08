@@ -1,0 +1,6 @@
+[Unit]
+Description=WallPana wallpaper rotation
+
+[Service]
+Type=oneshot
+ExecStart=@bindir@/wallpana --rotate

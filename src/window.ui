@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="WallpanaWindow" parent="AdwApplicationWindow">
+    <property name="title" translatable="yes">WallPana</property>
+    <property name="default-width">900</property>
+    <property name="default-height">650</property>
+    <property name="content">
+      <object class="AdwToastOverlay" id="toast_overlay">
+        <property name="child">
+          <object class="AdwToolbarView">
+            <child type="top">
+              <object class="AdwHeaderBar">
+                <child type="start">
+                  <object class="GtkButton" id="add_button">
+                    <property name="icon-name">list-add-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Add Wallpaper</property>
+                    <property name="action-name">win.add-wallpaper</property>
+                  </object>
+                </child>
+                <child type="start">
+                  <object class="GtkButton" id="rotate_button">
+                    <property name="icon-name">view-refresh-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Rotate to Next Wallpaper</property>
+                    <property name="action-name">win.rotate-next</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton">
+                    <property name="primary">True</property>
+                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Main Menu</property>
+                    <property name="menu-model">primary_menu</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <property name="content">
+              <object class="GtkStack" id="main_stack">
+                <property name="transition-type">crossfade</property>
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">empty</property>
+                    <property name="child">
+                      <object class="AdwStatusPage" id="empty_page">
+                        <property name="icon-name">image-x-generic-symbolic</property>
+                        <property name="title" translatable="yes">No Wallpapers Yet</property>
+                        <property name="description" translatable="yes">Add some images to build your rotation</property>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="label" translatable="yes">Add Wallpaper</property>
+                            <property name="halign">center</property>
+                            <property name="action-name">win.add-wallpaper</property>
+                            <style>
+                              <class name="pill"/>
+                              <class name="suggested-action"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">grid</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="hscrollbar-policy">never</property>
+                        <property name="child">
+                          <object class="GtkFlowBox" id="flow_box">
+                            <property name="valign">start</property>
+                            <property name="margin-top">16</property>
+                            <property name="margin-bottom">16</property>
+                            <property name="margin-start">16</property>
+                            <property name="margin-end">16</property>
+                            <property name="row-spacing">16</property>
+                            <property name="column-spacing">16</property>
+                            <property name="homogeneous">True</property>
+                            <property name="selection-mode">none</property>
+                            <property name="min-children-per-line">2</property>
+                            <property name="max-children-per-line">8</property>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Automatic Rotation</attribute>
+        <attribute name="action">app.preferences</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
+        <attribute name="action">app.shortcuts</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_About WallPana</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.WallPana.v1</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>WallPana</name>
+  <summary>Manage and auto-rotate your wallpapers</summary>
+  <description>
+    <p>
+      WallPana keeps a folder of your favorite wallpapers and rotates your
+      desktop background every 24 hours. Add images, crop them to fit your
+      screen, and switch wallpapers manually or let WallPana do it for you.
+    </p>
+  </description>
+
+  <developer id="io.github.snehal-reddy">
+    <name>Snehal-Reddy</name>
+  </developer>
+
+  <translation type="gettext">wallpana</translation>
+  <!-- All graphical applications having a desktop file must have this tag in the MetaInfo.
+     If this is present, appstreamcli compose will pull icons, keywords and categories from the desktop file. -->
+  <launchable type="desktop-id">com.WallPana.v1.desktop</launchable>
+  <content_rating type="oars-1.1" />
+
+  <branding>
+    <color type="primary" scheme_preference="light">#3584e4</color>
+    <color type="primary" scheme_preference="dark">#1a5fb4</color>
+  </branding>
+
+  <releases>
+    <release version="0.1.0" date="2026-09-08">
+      <description translate="no">
+        <p>Initial release.</p>
+        <ul>
+          <li>Managed wallpaper folder with add/remove/thumbnail grid</li>
+          <li>Automatic 24-hour rotation via a systemd --user timer</li>
+          <li>Manual rotate and interactive per-wallpaper selection</li>
+          <li>Crop preview matched to your display's aspect ratio</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
+</component>

@@ -1,0 +1,5 @@
+_build/
+builddir/
+builddir2/
+__pycache__/
+*.pyc
