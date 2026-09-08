@@ -1,1 +1,1 @@
-i18n.gettext('wallpana', preset: 'glib')
+i18n.gettext('fresco', preset: 'glib')

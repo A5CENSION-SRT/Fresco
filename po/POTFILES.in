@@ -1,8 +1,8 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/com.WallPana.v1.desktop.in
-data/com.WallPana.v1.metainfo.xml.in
-data/com.WallPana.v1.gschema.xml
+data/com.Fresco.v1.desktop.in
+data/com.Fresco.v1.metainfo.xml.in
+data/com.Fresco.v1.gschema.xml
 src/main.py
 src/window.py
 src/window.ui

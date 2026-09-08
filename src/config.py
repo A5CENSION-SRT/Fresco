@@ -16,17 +16,17 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Plain JSON persistence for WallPana's rotation state."""
+"""Plain JSON persistence for Fresco's rotation state."""
 
 import json
 import os
 from pathlib import Path
 
-CONFIG_DIR = Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config'))) / 'wallpana'
+CONFIG_DIR = Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config'))) / 'fresco'
 CONFIG_FILE = CONFIG_DIR / 'config.json'
 DEFAULT_WALLPAPERS_DIR = (
     Path(os.environ.get('XDG_DATA_HOME', str(Path.home() / '.local' / 'share')))
-    / 'wallpana' / 'wallpapers'
+    / 'fresco' / 'wallpapers'
 )
 
 DEFAULTS = {

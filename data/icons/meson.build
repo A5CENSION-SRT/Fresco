@@ -1,4 +1,4 @@
-application_id = 'com.WallPana.v1'
+application_id = 'com.Fresco.v1'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

@@ -29,9 +29,9 @@ THUMB_BOX_WIDTH = 340
 THUMB_BOX_HEIGHT = 210
 
 
-@Gtk.Template(resource_path='/com/WallPana/v1/window.ui')
-class WallpanaWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'WallpanaWindow'
+@Gtk.Template(resource_path='/com/Fresco/v1/window.ui')
+class FrescoWindow(Adw.ApplicationWindow):
+    __gtype_name__ = 'FrescoWindow'
 
     toast_overlay = Gtk.Template.Child()
     main_stack = Gtk.Template.Child()

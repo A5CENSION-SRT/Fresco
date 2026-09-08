@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="wallpana">
-	<schema id="com.WallPana.v1" path="/com/WallPana/v1/">
-	</schema>
-</schemalist>

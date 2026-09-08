@@ -1,9 +1,9 @@
 /* extension.js
  *
- * WallPana Shell integration: a top-bar indicator that can rotate to the
- * next wallpaper or apply a specific one, by talking to the main WallPana
- * app over its D-Bus GApplication action group (com.WallPana.v1, D-Bus
- * activatable, see data/com.WallPana.v1.service.in). No GTK/Python code
+ * Fresco Shell integration: a top-bar indicator that can rotate to the
+ * next wallpaper or apply a specific one, by talking to the main Fresco
+ * app over its D-Bus GApplication action group (com.Fresco.v1, D-Bus
+ * activatable, see data/com.Fresco.v1.service.in). No GTK/Python code
  * runs in-process here - this is a separate GJS technology stack.
  */
 
@@ -17,13 +17,13 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-const APP_ID = 'com.WallPana.v1';
-const APP_OBJECT_PATH = '/com/WallPana/v1';
+const APP_ID = 'com.Fresco.v1';
+const APP_OBJECT_PATH = '/com/Fresco/v1';
 
 function readConfig() {
     try {
         const path = GLib.build_filenamev(
-            [GLib.get_user_config_dir(), 'wallpana', 'config.json']);
+            [GLib.get_user_config_dir(), 'fresco', 'config.json']);
         const [ok, contents] = GLib.file_get_contents(path);
         if (!ok)
             return null;
@@ -36,7 +36,7 @@ function readConfig() {
 const WallpanaIndicator = GObject.registerClass(
 class WallpanaIndicator extends PanelMenu.Button {
     _init() {
-        super._init(0.0, 'WallPana');
+        super._init(0.0, 'Fresco');
 
         this.add_child(new St.Icon({
             icon_name: 'preferences-desktop-wallpaper-symbolic',
@@ -55,7 +55,7 @@ class WallpanaIndicator extends PanelMenu.Button {
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        const openItem = new PopupMenu.PopupMenuItem(_('Open WallPana…'));
+        const openItem = new PopupMenu.PopupMenuItem(_('Open Fresco…'));
         openItem.connect('activate', () => this._launchApp());
         this.menu.addMenuItem(openItem);
 
@@ -69,7 +69,7 @@ class WallpanaIndicator extends PanelMenu.Button {
         try {
             this._actionGroup.activate_action(actionName, parameter);
         } catch (e) {
-            logError(e, `WallPana: failed to activate ${actionName}`);
+            logError(e, `Fresco: failed to activate ${actionName}`);
         }
     }
 

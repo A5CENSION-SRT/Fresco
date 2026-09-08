@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>com.WallPana.v1</id>
+  <id>com.Fresco.v1</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
-  <name>WallPana</name>
+  <name>Fresco</name>
   <summary>Manage and auto-rotate your wallpapers</summary>
   <description>
     <p>
-      WallPana keeps a folder of your favorite wallpapers and rotates your
+      Fresco keeps a folder of your favorite wallpapers and rotates your
       desktop background every 24 hours. Add images, crop them to fit your
-      screen, and switch wallpapers manually or let WallPana do it for you.
+      screen, and switch wallpapers manually or let Fresco do it for you.
     </p>
   </description>
 
@@ -18,10 +18,10 @@
     <name>Snehal-Reddy</name>
   </developer>
 
-  <translation type="gettext">wallpana</translation>
+  <translation type="gettext">fresco</translation>
   <!-- All graphical applications having a desktop file must have this tag in the MetaInfo.
      If this is present, appstreamcli compose will pull icons, keywords and categories from the desktop file. -->
-  <launchable type="desktop-id">com.WallPana.v1.desktop</launchable>
+  <launchable type="desktop-id">com.Fresco.v1.desktop</launchable>
   <content_rating type="oars-1.1" />
 
   <branding>

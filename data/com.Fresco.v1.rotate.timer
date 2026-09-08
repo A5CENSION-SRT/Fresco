@@ -1,5 +1,5 @@
 [Unit]
-Description=Rotate the WallPana wallpaper every 24 hours
+Description=Rotate the Fresco wallpaper every 24 hours
 
 [Timer]
 OnBootSec=10min

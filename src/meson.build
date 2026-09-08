@@ -1,9 +1,9 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
-moduledir = pkgdatadir / 'wallpana'
+moduledir = pkgdatadir / 'fresco'
 gnome = import('gnome')
 
-gnome.compile_resources('wallpana',
-  'wallpana.gresource.xml',
+gnome.compile_resources('fresco',
+  'fresco.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
@@ -18,15 +18,15 @@ conf.set('localedir', get_option('prefix') / get_option('localedir'))
 conf.set('pkgdatadir', pkgdatadir)
 
 configure_file(
-  input: 'wallpana.in',
-  output: 'wallpana',
+  input: 'fresco.in',
+  output: 'fresco',
   configuration: conf,
   install: true,
   install_dir: get_option('bindir'),
   install_mode: 'rwxr-xr-x'
 )
 
-wallpana_sources = [
+fresco_sources = [
   '__init__.py',
   'main.py',
   'window.py',
@@ -35,4 +35,4 @@ wallpana_sources = [
   'crop_dialog.py',
 ]
 
-install_data(wallpana_sources, install_dir: moduledir)
+install_data(fresco_sources, install_dir: moduledir)

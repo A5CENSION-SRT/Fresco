@@ -1,9 +1,9 @@
 {
-    "id" : "com.WallPana.v1",
+    "id" : "com.Fresco.v1",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "50",
     "sdk" : "org.gnome.Sdk",
-    "command" : "wallpana",
+    "command" : "fresco",
     "finish-args" : [
         "--share=network",
         "--share=ipc",
@@ -24,7 +24,7 @@
     ],
     "modules" : [
         {
-            "name" : "wallpana",
+            "name" : "fresco",
             "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [

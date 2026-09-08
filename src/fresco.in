@@ -1,6 +1,6 @@
 #!@PYTHON@
 
-# wallpana.in
+# fresco.in
 #
 # Copyright 2026 Snehal-Reddy
 #
@@ -31,17 +31,17 @@ localedir = '@localedir@'
 
 sys.path.insert(1, pkgdatadir)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-locale.bindtextdomain('wallpana', localedir)
-locale.textdomain('wallpana')
-gettext.bindtextdomain('wallpana', localedir)
-gettext.textdomain('wallpana')
+locale.bindtextdomain('fresco', localedir)
+locale.textdomain('fresco')
+gettext.bindtextdomain('fresco', localedir)
+gettext.textdomain('fresco')
 
 if __name__ == '__main__':
     import gi
 
     from gi.repository import Gio
-    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'wallpana.gresource'))
+    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'fresco.gresource'))
     resource._register()
 
-    from wallpana import main
+    from fresco import main
     sys.exit(main.main(VERSION))

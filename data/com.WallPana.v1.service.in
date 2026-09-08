@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=com.WallPana.v1
-Exec=@bindir@/wallpana --gapplication-service

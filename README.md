@@ -1,16 +1,16 @@
-# WallPana
+# Fresco
 
-A native GNOME wallpaper engine. WallPana keeps a managed folder of
+A native GNOME wallpaper engine. Fresco keeps a managed folder of
 wallpapers and rotates your desktop background every 24 hours, with
 manual controls and a crop preview before anything is applied.
 
 ## Features
 
 - **Managed wallpaper folder** — add images via a file picker (they're
-  copied into `~/.local/share/wallpana/wallpapers/`), remove them, and
+  copied into `~/.local/share/fresco/wallpapers/`), remove them, and
   browse them as a thumbnail grid.
 - **Automatic 24h rotation** — a `systemd --user` timer
-  (`com.WallPana.v1.rotate.timer`) runs `wallpana --rotate` once a day.
+  (`com.Fresco.v1.rotate.timer`) runs `fresco --rotate` once a day.
   It's enabled automatically the first time you launch the app, and it
   keeps working whether or not the app window is open, and survives
   sleep/suspend (`Persistent=true`, so a missed tick fires on resume).
@@ -28,11 +28,11 @@ manual controls and a crop preview before anything is applied.
 
 ## Architecture decisions made
 
-- **Scheduling**: `systemd --user` timer + `wallpana --rotate`, not an
+- **Scheduling**: `systemd --user` timer + `fresco --rotate`, not an
   in-app timer, so rotation keeps happening when the app isn't running.
   The same `WallpaperManager` class backs both the CLI rotate path and
   the GUI.
-- **Persistence**: plain JSON at `~/.config/wallpana/config.json`
+- **Persistence**: plain JSON at `~/.config/fresco/config.json`
   (wallpapers dir, rotation order, current index, last-swap timestamp).
 - **Smooth transition**: not implemented — wallpapers are applied as an
   instant swap via `org.gnome.desktop.background`. GNOME doesn't expose
@@ -42,7 +42,7 @@ manual controls and a crop preview before anything is applied.
   wallpaper both use the primary monitor's geometry. All monitors get
   the same picture.
 - **Cropping**: originals are stashed in
-  `~/.local/share/wallpana/wallpapers/.originals/`, and the managed
+  `~/.local/share/fresco/wallpapers/.originals/`, and the managed
   folder holds only the already-cropped PNGs that get applied directly
   (this is what lets `--rotate` run headlessly, with no Gdk/display
   dependency).
@@ -52,16 +52,16 @@ manual controls and a crop preview before anything is applied.
 ```sh
 meson setup _build --prefix="$HOME/.local"
 ninja -C _build install
-wallpana
+fresco
 ```
 
 ## GNOME Shell extension
 
-The extension lives in `shell-extension/wallpana@snehal-reddy.github.io/`
+The extension lives in `shell-extension/fresco@snehal-reddy.github.io/`
 and is not installed by the Meson build. To try it:
 
 ```sh
-cp -r shell-extension/wallpana@snehal-reddy.github.io \
+cp -r shell-extension/fresco@snehal-reddy.github.io \
   ~/.local/share/gnome-shell/extensions/
 ```
 
@@ -69,12 +69,12 @@ Then log out and back in (Wayland needs a shell restart to notice a new
 extension directory), and enable it with:
 
 ```sh
-gnome-extensions enable wallpana@snehal-reddy.github.io
+gnome-extensions enable fresco@snehal-reddy.github.io
 ```
 
-It only lists wallpapers/rotates once the main WallPana app has been
-launched at least once (it reads `~/.config/wallpana/config.json` and
-talks to `com.WallPana.v1` over D-Bus, which is D-Bus-activatable so it
+It only lists wallpapers/rotates once the main Fresco app has been
+launched at least once (it reads `~/.config/fresco/config.json` and
+talks to `com.Fresco.v1` over D-Bus, which is D-Bus-activatable so it
 doesn't need to already be running).
 
 ## Known gaps / next steps

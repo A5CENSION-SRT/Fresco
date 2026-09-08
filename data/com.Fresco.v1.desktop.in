@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=WallPana
-Exec=wallpana
-Icon=com.WallPana.v1
+Name=Fresco
+Exec=fresco
+Icon=com.Fresco.v1
 Terminal=false
 Type=Application
 Categories=Utility;

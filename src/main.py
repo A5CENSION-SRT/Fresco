@@ -30,18 +30,18 @@ gi.require_version('Adw', '1')
 from gi.repository import Adw, Gio, GLib, Gtk
 
 from .wallpaper_manager import WallpaperManager
-from .window import WallpanaWindow
+from .window import FrescoWindow
 
-ROTATE_TIMER_UNIT = 'com.WallPana.v1.rotate.timer'
+ROTATE_TIMER_UNIT = 'com.Fresco.v1.rotate.timer'
 
 
-class WallpanaApplication(Adw.Application):
+class FrescoApplication(Adw.Application):
     """The main application singleton class."""
 
     def __init__(self):
-        super().__init__(application_id='com.WallPana.v1',
+        super().__init__(application_id='com.Fresco.v1',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
-                         resource_base_path='/com/WallPana/v1')
+                         resource_base_path='/com/Fresco/v1')
         self.manager = WallpaperManager()
         self._timer_enabled = False
 
@@ -61,14 +61,14 @@ class WallpanaApplication(Adw.Application):
         """
         win = self.props.active_window
         if not win:
-            win = WallpanaWindow(manager=self.manager, application=self)
+            win = FrescoWindow(manager=self.manager, application=self)
         win.present()
         self._ensure_rotation_timer_enabled()
 
     def on_about_action(self, *args):
         """Callback for the app.about action."""
-        about = Adw.AboutDialog(application_name='WallPana',
-                                application_icon='com.WallPana.v1',
+        about = Adw.AboutDialog(application_name='Fresco',
+                                application_icon='com.Fresco.v1',
                                 developer_name='Snehal-Reddy',
                                 version='0.1.0',
                                 # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
@@ -80,7 +80,7 @@ class WallpanaApplication(Adw.Application):
     def on_preferences_action(self, widget, _param):
         """Callback for the app.preferences action.
 
-        Automatic rotation is scheduled by the com.WallPana.v1.rotate.timer
+        Automatic rotation is scheduled by the com.Fresco.v1.rotate.timer
         systemd --user unit, enabled automatically on first launch; this
         just surfaces that state and lets it be toggled by hand.
         """
@@ -88,7 +88,7 @@ class WallpanaApplication(Adw.Application):
         enabled = self._timer_active()
         dialog = Adw.AlertDialog(
             heading=_('Automatic Rotation'),
-            body=_('WallPana rotates to the next wallpaper every 24 hours '
+            body=_('Fresco rotates to the next wallpaper every 24 hours '
                    'using a systemd --user timer, so it keeps working even '
                    'when this window is closed.\n\nStatus: {}').format(
                        _('On') if enabled else _('Off')),
@@ -109,7 +109,7 @@ class WallpanaApplication(Adw.Application):
 
     def on_shortcuts_action(self, *args):
         """Callback for the app.shortcuts action."""
-        builder = Gtk.Builder.new_from_resource('/com/WallPana/v1/shortcuts-dialog.ui')
+        builder = Gtk.Builder.new_from_resource('/com/Fresco/v1/shortcuts-dialog.ui')
         dialog = builder.get_object('shortcuts_dialog')
         dialog.present(self.props.active_window)
 
@@ -180,5 +180,5 @@ def main(version):
     if '--rotate' in sys.argv:
         WallpaperManager().rotate_next()
         return 0
-    app = WallpanaApplication()
+    app = FrescoApplication()
     return app.run([a for a in sys.argv if a != '--rotate'])
