@@ -3,7 +3,6 @@
   <id>com.fresco.v1</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-
   <name>Fresco</name>
   <summary>Manage and auto-rotate your wallpapers</summary>
   <description>
@@ -13,22 +12,17 @@
       screen, and switch wallpapers manually or let Fresco do it for you.
     </p>
   </description>
-
   <developer id="io.github.snehal-reddy">
     <name>Snehal-Reddy</name>
   </developer>
-
   <url type="homepage">https://github.com/A5CENSION-SRT/Fresco</url>
-
   <translation type="gettext">fresco</translation>
   <launchable type="desktop-id">com.fresco.v1.desktop</launchable>
-  <content_rating type="oars-1.1" />
-
+  <content_rating type="oars-1.1"/>
   <branding>
     <color type="primary" scheme_preference="light">#3584e4</color>
     <color type="primary" scheme_preference="dark">#1a5fb4</color>
   </branding>
-
   <releases>
     <release version="0.1.0" date="2026-09-08">
       <description translate="no">
@@ -42,5 +36,4 @@
       </description>
     </release>
   </releases>
-
 </component>

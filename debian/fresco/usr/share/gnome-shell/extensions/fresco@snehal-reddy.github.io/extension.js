@@ -37,31 +37,22 @@ class WallpanaIndicator extends PanelMenu.Button {
         this._actionGroup = Gio.DBusActionGroup.get(
             Gio.DBus.session, APP_ID, APP_OBJECT_PATH);
 
-        this._previewBin = new St.Bin({
-            style_class: 'fresco-preview',
-            style: 'width: 220px; height: 130px; border-radius: 8px; '
-                + 'background-size: cover; background-position: center;',
-        });
-        const previewItem = new PopupMenu.PopupBaseMenuItem({
-            reactive: false,
-            can_focus: false,
-        });
-        previewItem.add_child(this._previewBin);
-        this.menu.addMenuItem(previewItem);
-
         const rotateItem = new PopupMenu.PopupMenuItem(_('Rotate to Next Wallpaper'));
-        rotateItem.connect('activate', () => {
-            this._activate('rotate-next');
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 300, () => {
-                this._updatePreview();
-                return GLib.SOURCE_REMOVE;
-            });
-        });
+        rotateItem.connect('activate', () => this._activate('rotate-next'));
         this.menu.addMenuItem(rotateItem);
+
+        this._selectSubMenu = new PopupMenu.PopupSubMenuMenuItem(_('Select Wallpaper'));
+        this.menu.addMenuItem(this._selectSubMenu);
+
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        const openItem = new PopupMenu.PopupMenuItem(_('Open Fresco…'));
+        openItem.connect('activate', () => this._launchApp());
+        this.menu.addMenuItem(openItem);
 
         this.menu.connect('open-state-changed', (menu, isOpen) => {
             if (isOpen)
-                this._updatePreview();
+                this._rebuildWallpaperList();
         });
     }
 
@@ -73,23 +64,34 @@ class WallpanaIndicator extends PanelMenu.Button {
         }
     }
 
-    _updatePreview() {
+    _launchApp() {
+        const appInfo = Gio.DesktopAppInfo.new(`${APP_ID}.desktop`);
+        if (appInfo)
+            appInfo.launch([], global.create_app_launch_context(0, -1));
+    }
+
+    _rebuildWallpaperList() {
+        this._selectSubMenu.menu.removeAll();
+
         const config = readConfig();
         const order = config?.order ?? [];
         const current = order[config?.current_index] ?? null;
 
-        if (!current || !config?.wallpapers_dir) {
-            this._previewBin.set_style(
-                'width: 220px; height: 130px; border-radius: 8px;');
+        if (order.length === 0) {
+            const item = new PopupMenu.PopupMenuItem(_('No wallpapers added yet'));
+            item.setSensitive(false);
+            this._selectSubMenu.menu.addMenuItem(item);
             return;
         }
 
-        const path = GLib.build_filenamev([config.wallpapers_dir, current]);
-        const uri = Gio.File.new_for_path(path).get_uri();
-        this._previewBin.set_style(
-            'width: 220px; height: 130px; border-radius: 8px; '
-            + 'background-size: cover; background-position: center; '
-            + `background-image: url("${uri}");`);
+        for (const name of order) {
+            const item = new PopupMenu.PopupMenuItem(name);
+            if (name === current)
+                item.setOrnament(PopupMenu.Ornament.CHECK);
+            item.connect('activate', () =>
+                this._activate('apply-wallpaper', GLib.Variant.new_string(name)));
+            this._selectSubMenu.menu.addMenuItem(item);
+        }
     }
 });
 

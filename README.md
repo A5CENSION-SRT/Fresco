@@ -1,7 +1,5 @@
 # Fresco
 
-![Fresco logo](images%20/com.fresco.v1.png)
-
 Fresco is a native GNOME wallpaper manager. Keep a personal collection of
 images, crop them before applying, switch wallpapers from the app, or let
 Fresco rotate your desktop background automatically every 24 hours.

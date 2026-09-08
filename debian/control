@@ -10,6 +10,7 @@ Build-Depends: debhelper-compat (= 13),
                libglib2.0-bin,
                gettext,
 Standards-Version: 4.6.2
+Homepage: https://github.com/A5CENSION-SRT/Fresco
 Rules-Requires-Root: no
 
 Package: fresco

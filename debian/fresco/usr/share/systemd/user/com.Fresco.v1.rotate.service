@@ -1,0 +1,6 @@
+[Unit]
+Description=Fresco wallpaper rotation
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fresco --rotate
