@@ -8,4 +8,4 @@ Categories=Utility;
 Keywords=GTK;
 StartupNotify=true
 StartupWMClass=com.fresco.v1
-DBusActivatable=false
+DBusActivatable=true
