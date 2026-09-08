@@ -53,7 +53,7 @@ class FrescoWindow(Adw.ApplicationWindow):
 
         self.refresh()
 
-    # -- add / crop ---------------------------------------------------
+
     def on_add_wallpaper(self):
         dialog = Gtk.FileDialog(title=_('Select Wallpaper Images'))
         image_filter = Gtk.FileFilter()
@@ -121,7 +121,7 @@ class FrescoWindow(Adw.ApplicationWindow):
         dialog.set_transient_for(self)
         dialog.present()
 
-    # -- manual controls ---------------------------------------------------
+
     def on_rotate_next(self):
         name = self.manager.rotate_next()
         self.refresh()
@@ -140,7 +140,7 @@ class FrescoWindow(Adw.ApplicationWindow):
         self.refresh()
         self.toast_overlay.add_toast(Adw.Toast.new(_('Removed {}').format(name)))
 
-    # -- rendering ---------------------------------------------------
+
     def refresh(self):
         vadjustment = self.scrolled_window.get_vadjustment()
         scroll_position = vadjustment.get_value()
@@ -158,9 +158,7 @@ class FrescoWindow(Adw.ApplicationWindow):
         for name in names:
             self.flow_box.append(self._build_item(name, name == current))
 
-        # Rebuilding the FlowBox resets the scroll position - restore it
-        # once the new children are laid out and the adjustment's upper
-        # bound is recalculated, otherwise this clamps back to 0.
+
         GLib.idle_add(self._restore_scroll_position, vadjustment, scroll_position)
 
     def _restore_scroll_position(self, vadjustment, scroll_position):
@@ -191,22 +189,14 @@ class FrescoWindow(Adw.ApplicationWindow):
     def _build_item(self, name, is_current):
         pixbuf = self._thumbnail_pixbuf(name)
         picture = Gtk.Picture.new_for_pixbuf(pixbuf) if pixbuf else Gtk.Picture()
-        # CONTAIN: scale each thumbnail down to fit the cell, keeping its own
-        # aspect ratio - never cropped, never stretched. The size request
-        # is only an upper bound the image is scaled into, so this must
-        # stay off a filled/bordered background (no 'card' class) or the
-        # letterboxed space around non-matching aspect ratios shows up as
-        # an ugly empty box.
+
         picture.set_content_fit(Gtk.ContentFit.CONTAIN)
         picture.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
         picture.set_hexpand(False)
         picture.set_vexpand(False)
 
         overlay = Gtk.Overlay()
-        # Gtk.Overlay always allocates its *main* child the overlay's full
-        # allocated size - so the overlay itself needs a pinned size,
-        # otherwise a wide FlowBox row stretches the overlay (and the
-        # picture along with it).
+
         overlay.set_size_request(THUMB_BOX_WIDTH, THUMB_BOX_HEIGHT)
         overlay.set_halign(Gtk.Align.CENTER)
         overlay.set_valign(Gtk.Align.CENTER)

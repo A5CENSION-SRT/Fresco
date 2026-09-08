@@ -50,7 +50,7 @@ class WallpaperManager:
         self.originals_dir = self.wallpapers_dir / ORIGINALS_DIRNAME
         self._sync_order()
 
-    # -- persistence ---------------------------------------------------
+
     def _save(self):
         config.save(self._data)
 
@@ -68,7 +68,7 @@ class WallpaperManager:
             self._data['current_index'] = len(order) - 1
         self._save()
 
-    # -- queries ---------------------------------------------------
+
     def list_wallpapers(self):
         self._sync_order()
         return list(self._data['order'])
@@ -99,7 +99,7 @@ class WallpaperManager:
         pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         return (0, 0, pixbuf.get_width(), pixbuf.get_height())
 
-    # -- import / crop ---------------------------------------------------
+
     def import_wallpaper(self, source_path):
         """Stash the original file and return (original_path, stem) so the
         caller can run the crop UI and then call finish_import()."""
@@ -154,7 +154,7 @@ class WallpaperManager:
             counter += 1
         return candidate
 
-    # -- mutation ---------------------------------------------------
+
     def remove_wallpaper(self, name):
         order = self._data['order']
         if name not in order:
@@ -173,7 +173,7 @@ class WallpaperManager:
             self._data['current_index'] = len(order) - 1
         self._save()
 
-    # -- applying ---------------------------------------------------
+
     def apply(self, name):
         """Set an already-managed (already-cropped) wallpaper as current."""
         path = self.path_for(name)

@@ -1,12 +1,3 @@
-/* extension.js
- *
- * Fresco Shell integration: a top-bar indicator that can rotate to the
- * next wallpaper or apply a specific one, by talking to the main Fresco
- * app over its D-Bus GApplication action group (com.Fresco.v1, D-Bus
- * activatable, see data/com.Fresco.v1.service.in). No GTK/Python code
- * runs in-process here - this is a separate GJS technology stack.
- */
-
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import St from 'gi://St';

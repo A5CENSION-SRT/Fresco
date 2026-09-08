@@ -47,8 +47,6 @@ systemd_dep = dependency('systemd', required: false)
 if systemd_dep.found()
   systemd_user_unit_dir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir')
 else
-  # Falls back to the $XDG_DATA_HOME/systemd/user search path, which is what
-  # a non-system prefix (e.g. ~/.local) needs for systemd --user to find it.
   systemd_user_unit_dir = get_option('prefix') / get_option('datadir') / 'systemd' / 'user'
 endif
 

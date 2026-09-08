@@ -47,7 +47,7 @@ class CropDialog(Adw.Window):
         self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         self.img_w, self.img_h = self.pixbuf.get_width(), self.pixbuf.get_height()
 
-        # Default: the whole image, uncropped.
+
         self.crop_offset_x = 0.0
         self.crop_offset_y = 0.0
         self.crop_w = float(self.img_w)
@@ -108,7 +108,7 @@ class CropDialog(Adw.Window):
         toolbar_view.set_content(self.drawing_area)
         self.set_content(toolbar_view)
 
-    # -- drawing ---------------------------------------------------
+
     def _on_draw(self, area, cr, width, height):
         scale = min(width / self.img_w, height / self.img_h)
         disp_w, disp_h = self.img_w * scale, self.img_h * scale
@@ -138,7 +138,7 @@ class CropDialog(Adw.Window):
         cr.rectangle(crop_x, crop_y, crop_w, crop_h)
         cr.stroke()
 
-    # -- interaction ---------------------------------------------------
+
     def _widget_to_image(self, wx, wy):
         off_x, off_y, _disp_w, _disp_h, scale = self._display
         x = max(0.0, min((wx - off_x) / scale, self.img_w))
