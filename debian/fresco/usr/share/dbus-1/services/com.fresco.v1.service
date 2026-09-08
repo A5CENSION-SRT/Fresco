@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=com.fresco.v1
-Exec=/usr/bin/fresco --gapplication-service
