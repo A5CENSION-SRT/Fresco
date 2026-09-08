@@ -20,6 +20,7 @@
 
 import json
 import os
+import tempfile
 from pathlib import Path
 
 CONFIG_DIR = Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config'))) / 'fresco'
@@ -28,12 +29,14 @@ DEFAULT_WALLPAPERS_DIR = (
     Path(os.environ.get('XDG_DATA_HOME', str(Path.home() / '.local' / 'share')))
     / 'fresco' / 'wallpapers'
 )
+DEFAULT_ROTATION_INTERVAL_HOURS = 24
 
 DEFAULTS = {
     'wallpapers_dir': str(DEFAULT_WALLPAPERS_DIR),
     'order': [],
     'current_index': -1,
     'last_swap': None,
+    'rotation_interval_hours': DEFAULT_ROTATION_INTERVAL_HOURS,
 }
 
 
@@ -54,7 +57,9 @@ def load():
 def save(data):
     """Atomically write the config back to disk."""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    tmp = CONFIG_FILE.with_suffix('.json.tmp')
-    with open(tmp, 'w', encoding='utf-8') as f:
+    with tempfile.NamedTemporaryFile(
+            mode='w', encoding='utf-8', dir=CONFIG_DIR,
+            prefix='config.', suffix='.tmp', delete=False) as f:
         json.dump(data, f, indent=2)
-    tmp.replace(CONFIG_FILE)
+        tmp_name = f.name
+    os.replace(tmp_name, CONFIG_FILE)

@@ -17,8 +17,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import subprocess
 import sys
+from pathlib import Path
 
 from gettext import gettext as _
 
@@ -31,15 +33,18 @@ from gi.repository import Adw, Gio, GLib, Gtk
 
 from .wallpaper_manager import WallpaperManager
 from .window import FrescoWindow
+from . import config
 
 ROTATE_TIMER_UNIT = 'com.Fresco.v1.rotate.timer'
+MIN_ROTATION_INTERVAL_HOURS = 1
+MAX_ROTATION_INTERVAL_HOURS = 168
 
 
 class FrescoApplication(Adw.Application):
     """The main application singleton class."""
 
     def __init__(self):
-        super().__init__(application_id='com.Fresco.v1',
+        super().__init__(application_id='com.fresco.v1',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/com/Fresco/v1')
         self.manager = WallpaperManager()
@@ -68,7 +73,7 @@ class FrescoApplication(Adw.Application):
     def on_about_action(self, *args):
         """Callback for the app.about action."""
         about = Adw.AboutDialog(application_name='Fresco',
-                                application_icon='com.Fresco.v1',
+                                application_icon='com.fresco.v1',
                                 developer_name='Snehal-Reddy',
                                 version='0.1.0',
                                 # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
@@ -86,26 +91,88 @@ class FrescoApplication(Adw.Application):
         """
         win = self.props.active_window
         enabled = self._timer_active()
+        interval = self._rotation_interval_hours()
+        interval_label = Gtk.Label(label=self._format_interval(interval))
+        interval_label.set_xalign(0)
+        interval_label.add_css_class('dim-label')
+        scale = Gtk.Scale.new_with_range(
+            Gtk.Orientation.HORIZONTAL,
+            MIN_ROTATION_INTERVAL_HOURS,
+            MAX_ROTATION_INTERVAL_HOURS,
+            1,
+        )
+        scale.set_value(interval)
+        scale.set_digits(0)
+        scale.set_hexpand(True)
+        scale.set_draw_value(False)
+        scale.set_tooltip_text(_('Rotation interval in hours'))
+        scale.connect(
+            'value-changed',
+            lambda slider: interval_label.set_text(
+                self._format_interval(int(slider.get_value()))
+            ),
+        )
+        interval_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        interval_box.append(Gtk.Label(label=_('Rotate every'), xalign=0))
+        interval_box.append(scale)
+        interval_box.append(interval_label)
         dialog = Adw.AlertDialog(
             heading=_('Automatic Rotation'),
-            body=_('Fresco rotates to the next wallpaper every 24 hours '
-                   'using a systemd --user timer, so it keeps working even '
+            body=_('Fresco uses a systemd --user timer, so it keeps working '
                    'when this window is closed.\n\nStatus: {}').format(
                        _('On') if enabled else _('Off')),
         )
+        dialog.set_extra_child(interval_box)
         dialog.add_response('close', _('Close'))
         dialog.add_response('toggle', _('Turn Off') if enabled else _('Turn On'))
         if enabled:
             dialog.set_response_appearance('toggle', Adw.ResponseAppearance.DESTRUCTIVE)
-        dialog.connect('response', self._on_preferences_response)
+        dialog.connect('response', self._on_preferences_response, scale)
         dialog.present(win)
 
-    def _on_preferences_response(self, dialog, response):
+    def _on_preferences_response(self, dialog, response, scale):
+        interval = int(scale.get_value())
+        if interval != self._rotation_interval_hours():
+            self._set_rotation_interval(interval)
         if response == 'toggle':
             if self._timer_active():
                 self._run_systemctl('disable', '--now')
             else:
                 self._run_systemctl('enable', '--now')
+
+    def _rotation_interval_hours(self):
+        data = config.load()
+        return max(
+            MIN_ROTATION_INTERVAL_HOURS,
+            min(MAX_ROTATION_INTERVAL_HOURS, int(data.get(
+                'rotation_interval_hours', config.DEFAULT_ROTATION_INTERVAL_HOURS
+            ))),
+        )
+
+    @staticmethod
+    def _format_interval(hours):
+        days, remaining_hours = divmod(hours, 24)
+        if days and remaining_hours:
+            return _('{} days, {} hours').format(days, remaining_hours)
+        if days:
+            return _('{} days').format(days)
+        return _('{} hours').format(hours)
+
+    def _set_rotation_interval(self, hours):
+        data = config.load()
+        data['rotation_interval_hours'] = hours
+        config.save(data)
+        timer_dropin = (
+            Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config')))
+            / 'systemd' / 'user' / f'{ROTATE_TIMER_UNIT}.d' / 'interval.conf'
+        )
+        timer_dropin.parent.mkdir(parents=True, exist_ok=True)
+        timer_dropin.write_text(
+            f'[Timer]\nOnUnitActiveSec={hours}h\n', encoding='utf-8'
+        )
+        self._run_systemctl('daemon-reload')
+        if self._timer_active():
+            self._run_systemctl('restart')
 
     def on_shortcuts_action(self, *args):
         """Callback for the app.shortcuts action."""
@@ -143,6 +210,8 @@ class FrescoApplication(Adw.Application):
         if self._timer_enabled:
             return
         self._timer_enabled = True
+        interval = self._rotation_interval_hours()
+        self._set_rotation_interval(interval)
         self._run_systemctl('enable', '--now')
 
     def _timer_active(self):
@@ -151,8 +220,11 @@ class FrescoApplication(Adw.Application):
 
     def _run_systemctl(self, action, *extra_args, check=False):
         try:
+            command = ['systemctl', '--user', action, *extra_args]
+            if action != 'daemon-reload':
+                command.append(ROTATE_TIMER_UNIT)
             return subprocess.run(
-                ['systemctl', '--user', action, *extra_args, ROTATE_TIMER_UNIT],
+                command,
                 check=check, capture_output=True, text=True, timeout=5,
             )
         except (OSError, subprocess.SubprocessError):

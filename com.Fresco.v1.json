@@ -1,5 +1,5 @@
 {
-    "id" : "com.Fresco.v1",
+    "id" : "com.fresco.v1",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "50",
     "sdk" : "org.gnome.Sdk",

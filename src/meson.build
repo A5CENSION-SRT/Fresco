@@ -36,3 +36,8 @@ fresco_sources = [
 ]
 
 install_data(fresco_sources, install_dir: moduledir)
+
+install_subdir(
+  meson.project_source_root() / 'shell-extension/fresco@snehal-reddy.github.io',
+  install_dir: get_option('datadir') / 'gnome-shell/extensions'
+)

@@ -3,12 +3,12 @@ import Gio from 'gi://Gio';
 import St from 'gi://St';
 import GObject from 'gi://GObject';
 
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-const APP_ID = 'com.Fresco.v1';
+const APP_ID = 'com.fresco.v1';
 const APP_OBJECT_PATH = '/com/Fresco/v1';
 
 function readConfig() {
@@ -30,7 +30,7 @@ class WallpanaIndicator extends PanelMenu.Button {
         super._init(0.0, 'Fresco');
 
         this.add_child(new St.Icon({
-            icon_name: 'preferences-desktop-wallpaper-symbolic',
+            icon_name: 'com.fresco.v1-symbolic',
             style_class: 'system-status-icon',
         }));
 

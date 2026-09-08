@@ -1,10 +1,11 @@
 [Desktop Entry]
 Name=Fresco
 Exec=fresco
-Icon=com.Fresco.v1
+Icon=com.fresco.v1
 Terminal=false
 Type=Application
 Categories=Utility;
 Keywords=GTK;
 StartupNotify=true
-DBusActivatable=true
+StartupWMClass=com.fresco.v1
+DBusActivatable=false

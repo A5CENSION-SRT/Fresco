@@ -1,88 +1,85 @@
 # Fresco
 
-A native GNOME wallpaper engine. Fresco keeps a managed folder of
-wallpapers and rotates your desktop background every 24 hours, with
-manual controls and a crop preview before anything is applied.
+![Fresco logo](images%20/com.fresco.v1.png)
+
+Fresco is a native GNOME wallpaper manager. Keep a personal collection of
+images, crop them before applying, switch wallpapers from the app, or let
+Fresco rotate your desktop background automatically every 24 hours.
+
+![Fresco wallpaper collection](images%20/image.png)
 
 ## Features
 
-- **Managed wallpaper folder** — add images via a file picker (they're
-  copied into `~/.local/share/fresco/wallpapers/`), remove them, and
-  browse them as a thumbnail grid.
-- **Automatic 24h rotation** — a `systemd --user` timer
-  (`com.Fresco.v1.rotate.timer`) runs `fresco --rotate` once a day.
-  It's enabled automatically the first time you launch the app, and it
-  keeps working whether or not the app window is open, and survives
-  sleep/suspend (`Persistent=true`, so a missed tick fires on resume).
-- **Manual controls** — a header-bar button to rotate to the next
-  wallpaper immediately, and click-to-apply on any thumbnail for
-  interactive selection.
-- **Crop preview** — every import goes through a crop dialog. The crop
-  region matches your primary display's aspect ratio; drag it to choose
-  what's kept. Right-click a thumbnail to re-crop it later from its
-  original.
-- **GNOME Shell top-bar widget** — a separate GJS extension
-  (`shell-extension/`) that can rotate or apply a specific wallpaper
-  from the top bar without opening the app, by calling the app's D-Bus
-  action group.
+- Import, remove, and browse wallpapers in a thumbnail grid.
+- Crop new wallpapers and re-crop them later from their original images.
+- Apply any wallpaper immediately or rotate to another one manually.
+- Rotate automatically with a configurable `systemd --user` timer, even when
+  the app is closed. Missed rotations run after the system resumes.
+- Optionally control Fresco from the GNOME Shell top bar with the included
+  extension.
 
-## Architecture decisions made
+## Requirements
 
-- **Scheduling**: `systemd --user` timer + `fresco --rotate`, not an
-  in-app timer, so rotation keeps happening when the app isn't running.
-  The same `WallpaperManager` class backs both the CLI rotate path and
-  the GUI.
-- **Persistence**: plain JSON at `~/.config/fresco/config.json`
-  (wallpapers dir, rotation order, current index, last-swap timestamp).
-- **Smooth transition**: not implemented — wallpapers are applied as an
-  instant swap via `org.gnome.desktop.background`. GNOME doesn't expose
-  a crossfade for this key; a custom compositor-level fade was out of
-  scope for a first pass.
-- **Multi-monitor**: not handled — the crop target and the applied
-  wallpaper both use the primary monitor's geometry. All monitors get
-  the same picture.
-- **Cropping**: originals are stashed in
-  `~/.local/share/fresco/wallpapers/.originals/`, and the managed
-  folder holds only the already-cropped PNGs that get applied directly
-  (this is what lets `--rotate` run headlessly, with no Gdk/display
-  dependency).
+- GNOME 45 or newer
+- GTK 4 and libadwaita 1
+- Python 3 with PyGObject and GdkPixbuf
+- Meson and Ninja
+- `systemd --user` for automatic rotation
 
-## Building
+## Build and install
+
+Install the platform development packages for GTK 4, libadwaita, GObject
+Introspection, GdkPixbuf, and Python GI using your distribution's package
+manager. Then build Fresco with Meson:
 
 ```sh
-meson setup _build --prefix="$HOME/.local"
-ninja -C _build install
+meson setup build --prefix="$HOME/.local"
+meson compile -C build
+meson install -C build
+```
+
+Make sure `~/.local/bin` is on your `PATH`, then start the app:
+
+```sh
 fresco
 ```
 
+The automatic rotation timer is enabled when Fresco is first launched. Its
+interval can be adjusted from 1 hour to 7 days in the preferences dialog, and
+the timer can be turned on or off there as well.
+
 ## GNOME Shell extension
 
-The extension lives in `shell-extension/fresco@snehal-reddy.github.io/`
-and is not installed by the Meson build. To try it:
+The optional extension adds a top-bar menu for rotating or selecting a
+specific Fresco wallpaper. It is installed with the main Meson build.
 
-```sh
-cp -r shell-extension/fresco@snehal-reddy.github.io \
-  ~/.local/share/gnome-shell/extensions/
-```
-
-Then log out and back in (Wayland needs a shell restart to notice a new
-extension directory), and enable it with:
+Enable it after installing Fresco:
 
 ```sh
 gnome-extensions enable fresco@snehal-reddy.github.io
 ```
 
-It only lists wallpapers/rotates once the main Fresco app has been
-launched at least once (it reads `~/.config/fresco/config.json` and
-talks to `com.Fresco.v1` over D-Bus, which is D-Bus-activatable so it
-doesn't need to already be running).
+Launch Fresco once before using the extension so its wallpaper collection and
+D-Bus actions are available. Restart GNOME Shell or log out and back in if the
+extension does not appear immediately.
 
-## Known gaps / next steps
+## Data storage
 
-- No crossfade transition on wallpaper swap.
-- No per-monitor cropping for multi-monitor setups.
-- The Shell extension's "Select Wallpaper" submenu reads the config file
-  directly rather than through a dedicated D-Bus query interface —
-  fine for a single-user desktop app, but worth revisiting if the
-  config format changes.
-- No Preferences UI beyond an automatic-rotation on/off toggle.
+Fresco stores its data in standard per-user directories:
+
+- Wallpaper files: `~/.local/share/fresco/wallpapers/`
+- Original images used for re-cropping: `~/.local/share/fresco/wallpapers/.originals/`
+- Configuration and wallpaper order: `~/.config/fresco/config.json`
+
+Wallpapers are applied through GNOME's desktop background settings. The same
+wallpaper is used across all monitors, with GNOME handling the final scaling.
+
+## Project status
+
+Fresco is an early release. Wallpaper changes are immediate, and cropping is
+currently shared across monitors rather than configured per display.
+
+## License
+
+Fresco is free software licensed under the GNU General Public License,
+version 3 or later. See [COPYING](COPYING) for the full license text.

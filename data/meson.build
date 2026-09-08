@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
         input: 'com.Fresco.v1.desktop.in',
-       output: 'com.Fresco.v1.desktop',
+      output: 'com.fresco.v1.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -38,7 +38,7 @@ service_conf = configuration_data()
 service_conf.set('bindir', get_option('prefix') / get_option('bindir'))
 configure_file(
   input: 'com.Fresco.v1.service.in',
-  output: 'com.Fresco.v1.service',
+  output: 'com.fresco.v1.service',
   configuration: service_conf,
   install_dir: get_option('datadir') / 'dbus-1' / 'services'
 )
