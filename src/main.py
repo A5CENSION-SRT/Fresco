@@ -90,7 +90,7 @@ class FrescoApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='Fresco',
                                 application_icon='com.fresco.v1',
                                 developer_name='Snehal-Reddy',
-                                version='0.1.0',
+                                version='0.2.0',
                                 # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
                                 translator_credits = _('translator-credits'),
                                 developers=['Snehal-Reddy'],
@@ -215,14 +215,7 @@ class FrescoApplication(Adw.Application):
             Path(os.environ.get('XDG_CONFIG_HOME', str(Path.home() / '.config')))
             / 'systemd' / 'user' / f'{ROTATE_TIMER_UNIT}.d' / 'interval.conf'
         )
-        timer_dropin.parent.mkdir(parents=True, exist_ok=True)
-        timer_dropin.write_text(
-            # OnUnitActiveSec= is cumulative across the base unit and
-            # drop-ins (systemd.timer(5)); an empty assignment first
-            # clears the base unit's 24h default so only this interval
-            # is active, instead of both firing.
-            f'[Timer]\nOnUnitActiveSec=\nOnUnitActiveSec={hours}h\n', encoding='utf-8'
-        )
+        timer_dropin.unlink(missing_ok=True)
         self._run_systemctl('daemon-reload')
         if self._timer_active():
             self._run_systemctl('restart')
@@ -303,7 +296,23 @@ class FrescoApplication(Adw.Application):
 def main(version):
     """The application's entry point."""
     if '--rotate' in sys.argv:
-        WallpaperManager().rotate_next()
+        manager = WallpaperManager()
+        last_swap = manager.last_swap()
+        interval = max(
+            MIN_ROTATION_INTERVAL_HOURS,
+            min(MAX_ROTATION_INTERVAL_HOURS, int(config.load().get(
+                'rotation_interval_hours', config.DEFAULT_ROTATION_INTERVAL_HOURS
+            ))),
+        )
+        if not last_swap:
+            manager.rotate_next()
+            return 0
+        try:
+            due_at = datetime.fromisoformat(last_swap) + timedelta(hours=interval)
+        except ValueError:
+            due_at = datetime.min.replace(tzinfo=timezone.utc)
+        if datetime.now(timezone.utc) >= due_at:
+            manager.rotate_next()
         return 0
     app = FrescoApplication()
     return app.run([a for a in sys.argv if a != '--rotate'])

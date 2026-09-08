@@ -2,8 +2,7 @@
 Description=Rotate the Fresco wallpaper on a schedule
 
 [Timer]
-OnBootSec=10min
-OnUnitActiveSec=24h
+OnCalendar=hourly
 Persistent=true
 
 [Install]
